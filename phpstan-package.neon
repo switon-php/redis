@@ -1,0 +1,8 @@
+parameters:
+    ignoreErrors:
+        -
+            identifier: argument.type
+            message: '~function parse_str expects string, string\|false given~'
+        -
+            identifier: argument.type
+            message: '~function trim expects string, array~'

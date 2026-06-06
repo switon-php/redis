@@ -1,0 +1,74 @@
+{
+    "name": "switon/redis",
+    "description": "Pooled Redis client with transient connections for transactions, scans, and blocking commands for Switon Framework",
+    "type": "library",
+    "keywords": [
+        "switon",
+        "redis",
+        "cache",
+        "pooling"
+    ],
+    "homepage": "https://github.com/switon-php/redis",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "switon",
+            "email": "admin@switon.dev"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/switon-php/redis",
+        "issues": "https://github.com/switon-php/redis/issues",
+        "docs": "https://docs.switon.dev/latest/redis"
+    },
+    "require": {
+        "php": ">=8.3",
+        "ext-redis": "*",
+        "psr/event-dispatcher": "^1.0",
+        "switon/command": "^1.0",
+        "switon/console": "^1.0",
+        "switon/core": "^1.0",
+        "switon/di": "^1.0",
+        "switon/event": "^1.0",
+        "switon/pool": "^1.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.0",
+        "switon/testing": "^1.0",
+        "phpstan/extension-installer": "^1.4"
+    },
+    "config": {
+        "allow-plugins": {
+            "switon/composer-extra": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Switon\\Redis\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Switon\\Redis\\Tests\\": "tests/"
+        },
+        "files": [
+            "tests/Fixtures/PhpRedisStubs.php"
+        ]
+    },
+    "scripts": {
+        "phpstan": "@php vendor/bin/phpstan analyse",
+        "test:unit": "@php vendor/bin/phpunit --configuration tests/phpunit.xml.dist --testsuite=unit --display-deprecations --display-phpunit-notices",
+        "test": "@php vendor/bin/phpunit --configuration tests/phpunit.xml.dist --testsuite=all --display-deprecations --display-phpunit-notices"
+    },
+    "extra": {
+        "switon": {
+            "commands": [
+                "Switon\\Redis\\Command\\RedisCommand"
+            ]
+        },
+        "branch-alias": {
+            "dev-dev": "1.0.x-dev"
+        }
+    }
+}
