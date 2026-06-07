@@ -6,3 +6,6 @@ parameters:
         -
             identifier: argument.type
             message: '~function trim expects string, array~'
+        -
+            identifier: argument.type
+            message: '~Redis::auth\(\) expects string, array~'
