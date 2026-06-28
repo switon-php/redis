@@ -10,6 +10,7 @@ use RedisCluster;
 use RedisException;
 use Switon\Core\Attribute\Autowired;
 use Switon\Core\MakerInterface;
+use Switon\Core\OwnerAwareInterface;
 use Switon\Redis\Connector\ClusterConnector;
 use Switon\Redis\Connector\RedisConnector;
 use Switon\Redis\Connector\SentinelConnector;
@@ -50,8 +51,9 @@ use function preg_match;
  * @see \Switon\Redis\Event\RedisCalled
  * @see \Switon\Redis\Event\RedisClose
  */
-class Connection
+class Connection implements OwnerAwareInterface
 {
+    #[Autowired] protected ClientInterface $owner;
     #[Autowired] protected EventDispatcherInterface $eventDispatcher;
     #[Autowired] protected MakerInterface $maker;
 
@@ -91,6 +93,11 @@ class Connection
     {
         $this->redis = null;
         $this->last_heartbeat = null;
+    }
+
+    public function getOwner(): ClientInterface
+    {
+        return $this->owner;
     }
 
     /**

@@ -66,7 +66,7 @@ class Client implements ClientInterface
                 $this->pool_size = (int)$matches[1];
             }
 
-            $this->poolManager->add($this, [Connection::class, ['uri' => $this->uri]], $this->pool_size);
+            $this->poolManager->add($this, [Connection::class, ['uri' => $this->uri, 'owner' => $this]], $this->pool_size);
         }
     }
 

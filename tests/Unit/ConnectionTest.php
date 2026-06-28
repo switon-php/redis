@@ -23,6 +23,7 @@ use Switon\Redis\Exception\AuthException;
 use Switon\Redis\Exception\ConnectionException;
 use Switon\Redis\Exception\DatabaseSelectException;
 use Switon\Redis\Exception\InvalidUriFormatException;
+use Switon\Redis\Tests\Fixtures\StubRedisClient;
 use Switon\Redis\Tests\TestCase;
 use RedisException;
 use ReflectionClass;
@@ -1649,6 +1650,7 @@ class ConnectionTest extends TestCase
         // Use container's make() method to properly inject dependencies
         return $this->make(Connection::class, [
             'uri' => $uri,
+            'owner' => new StubRedisClient(),
             'eventDispatcher' => $this->eventDispatcher,
             'connectors' => [
                 'redis' => $redisConnector,
