@@ -9,6 +9,7 @@ use Redis;
 use RedisCluster;
 use RedisException;
 use Switon\Core\Attribute\Autowired;
+use Switon\Core\ClockInterface;
 use Switon\Core\MakerInterface;
 use Switon\Core\OwnerAwareInterface;
 use Switon\Redis\Connector\ClusterConnector;
@@ -26,7 +27,6 @@ use Switon\Redis\Exception\InvalidUriFormatException;
 
 use function in_array;
 use function is_string;
-use function microtime;
 use function parse_str;
 use function parse_url;
 use function preg_match;
@@ -55,6 +55,7 @@ class Connection implements OwnerAwareInterface
 {
     #[Autowired] protected ClientInterface $owner;
     #[Autowired] protected EventDispatcherInterface $eventDispatcher;
+    #[Autowired] protected ClockInterface $clock;
     #[Autowired] protected MakerInterface $maker;
 
     #[Autowired] protected string $uri;
@@ -133,7 +134,7 @@ class Connection implements OwnerAwareInterface
      */
     public function getConnect(): Redis|RedisCluster
     {
-        if ($this->redis !== null && microtime(true) - $this->last_heartbeat > $this->heartbeat) {
+        if ($this->redis !== null && $this->clock->microtime() - $this->last_heartbeat > $this->heartbeat) {
             try {
                 if (@$this->redis->echo('heartbeat') === false) {
                     $this->close();
@@ -177,7 +178,7 @@ class Connection implements OwnerAwareInterface
             $this->redis = $redis;
         }
 
-        $this->last_heartbeat = microtime(true);
+        $this->last_heartbeat = $this->clock->microtime();
 
         return $this->redis;
     }
@@ -239,9 +240,9 @@ class Connection implements OwnerAwareInterface
     {
         $this->eventDispatcher->dispatch(new RedisCalling($this, $method, $arguments));
 
-        $start_time = microtime(true);
+        $start_time = $this->clock->microtime();
         $return = $this->call($method, $arguments);
-        $elapsed = microtime(true) - $start_time;
+        $elapsed = $this->clock->elapsed($start_time);
 
         $this->eventDispatcher->dispatch(new RedisCalled($this, $method, $arguments, $elapsed, $return));
 

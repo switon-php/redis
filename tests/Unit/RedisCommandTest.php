@@ -7,6 +7,7 @@ namespace Switon\Redis\Tests\Unit;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Switon\Core\ClockInterface;
 use Switon\Core\ConsoleInterface;
 use Switon\Di\NamedLookupInterface;
 use Switon\Redis\ClientInterface;
@@ -36,6 +37,11 @@ class RedisCommandTest extends TestCase
         $this->namedLookup = $this->createMock(NamedLookupInterface::class);
         $this->redis = new FakeRedisClient();
 
+        $clock = $this->createStub(ClockInterface::class);
+        $clock->method('microtime')->willReturn(1_000.0);
+        $clock->method('elapsed')->willReturn(0.001);
+
+        $this->command->setClock($clock);
         $this->command->setConsole($this->console);
         $this->command->setNamedLookup($this->namedLookup);
         $this->command->setRedis($this->redis);
@@ -363,6 +369,11 @@ class RedisCommandTest extends TestCase
 
 class RedisCommandProbe extends RedisCommand
 {
+    public function setClock(ClockInterface $clock): void
+    {
+        $this->clock = $clock;
+    }
+
     public function setConsole(ConsoleInterface $console): void
     {
         $this->console = $console;

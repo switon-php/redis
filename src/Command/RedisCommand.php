@@ -8,6 +8,7 @@ use Switon\Command\Attribute\Hidden;
 use Switon\Command\Attribute\Tool;
 use Switon\Console\Colors;
 use Switon\Core\Attribute\Autowired;
+use Switon\Core\ClockInterface;
 use Switon\Core\ConsoleInterface;
 use Switon\Di\NamedLookupInterface;
 use Switon\Redis\ClientInterface;
@@ -21,7 +22,6 @@ use function in_array;
 use function is_array;
 use function is_numeric;
 use function is_string;
-use function microtime;
 use function number_format;
 use function parse_url;
 use function preg_match;
@@ -52,6 +52,7 @@ use function ucfirst;
 class RedisCommand
 {
     #[Autowired] protected ConsoleInterface $console;
+    #[Autowired] protected ClockInterface $clock;
     #[Autowired] protected ClientInterface $redis;
     /** @var NamedLookupInterface<ClientInterface> */
     #[Autowired] protected NamedLookupInterface $namedLookup;
@@ -92,9 +93,9 @@ class RedisCommand
         try {
             $redis = $this->getRedis($connection);
 
-            $start = microtime(true);
+            $startedAt = $this->clock->microtime();
             $pong = $redis->ping();
-            $latency = microtime(true) - $start;
+            $latency = $this->clock->elapsed($startedAt);
 
             if ($pong !== 'PONG' && $pong !== true) {
                 return $this->console->error('Connection check failed: Unexpected response from PING');

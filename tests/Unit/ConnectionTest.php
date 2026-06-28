@@ -7,6 +7,7 @@ namespace Switon\Redis\Tests\Unit;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Redis;
 use RedisCluster;
+use Switon\Core\ClockInterface;
 use Switon\Core\MakerInterface;
 use Switon\Core\Runtime;
 use Switon\Redis\Connection;
@@ -1647,11 +1648,23 @@ class ConnectionTest extends TestCase
         $sentinelConnector = new SentinelConnector($this->mockContainer);
         $clusterConnector = new ClusterConnector($this->mockContainer);
 
+        $clock = $this->createStub(ClockInterface::class);
+        $time = 1_000_000.0;
+        $clock->method('microtime')->willReturnCallback(function () use (&$time): float {
+            $time += 0.001;
+
+            return $time;
+        });
+        $clock->method('elapsed')->willReturnCallback(
+            static fn (float $startedAt, int $precision = 3): float => round($clock->microtime() - $startedAt, $precision)
+        );
+
         // Use container's make() method to properly inject dependencies
         return $this->make(Connection::class, [
             'uri' => $uri,
             'owner' => new StubRedisClient(),
             'eventDispatcher' => $this->eventDispatcher,
+            'clock' => $clock,
             'connectors' => [
                 'redis' => $redisConnector,
                 'rediss' => $redisConnector,
