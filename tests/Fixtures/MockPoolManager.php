@@ -44,8 +44,15 @@ class MockPoolManager implements PoolManagerInterface
             $this->pools[$ownerId][$type] = [];
         }
 
-        for ($i = 0; $i < $size; $i++) {
+        if (is_object($sample)) {
             $this->pools[$ownerId][$type][] = $sample;
+            for ($i = 1; $i < $size; $i++) {
+                $this->pools[$ownerId][$type][] = clone $sample;
+            }
+        } else {
+            for ($i = 0; $i < $size; $i++) {
+                $this->pools[$ownerId][$type][] = $sample;
+            }
         }
 
         $this->added[$ownerId][$type][] = ['sample' => $sample, 'size' => $size];
