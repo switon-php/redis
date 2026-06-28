@@ -7,6 +7,7 @@ namespace Switon\Redis\Event;
 use Psr\Log\LoggerInterface;
 use Switon\Core\Categorized;
 use Switon\Core\Json;
+use Switon\Core\SenderAwareInterface;
 use Switon\Eventing\Attribute\EventLevel;
 use Switon\Eventing\EventLogInterface;
 use Switon\Eventing\Severity;
@@ -25,19 +26,25 @@ use function substr;
  * @see \Switon\Redis\Event\RedisCalled
  */
 #[EventLevel(Severity::DEBUG)]
-class RedisCalling implements EventLogInterface
+class RedisCalling implements EventLogInterface, SenderAwareInterface
 {
+    public Connection $sender;
     /**
-     * @param Connection $redis Connection that will execute the command
      * @param string $method Redis method name
      * @param array<int, mixed> $arguments Redis method arguments
      */
     public function __construct(
-        public Connection $redis,
-        public string     $method,
-        public array      $arguments
+        Connection $sender,
+        public string $method,
+        public array $arguments
     ) {
+        $this->sender = $sender;
 
+    }
+
+    public function getSender(): Connection
+    {
+        return $this->sender;
     }
 
     /**

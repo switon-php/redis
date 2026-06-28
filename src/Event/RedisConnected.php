@@ -7,6 +7,7 @@ namespace Switon\Redis\Event;
 use JsonSerializable;
 use Redis;
 use RedisCluster;
+use Switon\Core\SenderAwareInterface;
 use Switon\Eventing\Attribute\EventLevel;
 use Switon\Eventing\Severity;
 use Switon\Redis\Connection;
@@ -25,19 +26,23 @@ use function substr;
  * @see \Switon\Redis\Event\RedisClose
  */
 #[EventLevel(Severity::DEBUG)]
-class RedisConnected implements JsonSerializable
+class RedisConnected implements JsonSerializable, SenderAwareInterface
 {
     /**
-     * @param Connection $connection Established connection wrapper
      * @param string $uri Connected Redis URI
      * @param Redis|RedisCluster $redis Native Redis client instance
      */
     public function __construct(
-        public Connection         $connection,
-        public string             $uri,
+        public Connection $sender,
+        public string $uri,
         public Redis|RedisCluster $redis,
     ) {
 
+    }
+
+    public function getSender(): Connection
+    {
+        return $this->sender;
     }
 
     /**

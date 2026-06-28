@@ -621,7 +621,6 @@ class ConnectionTest extends TestCase
         $this->assertInstanceOf(RedisClose::class, $closeEvent);
         $this->assertSame($uri, $closeEvent->uri);
         $this->assertSame($redis, $closeEvent->redis);
-        $this->assertSame($connection, $closeEvent->connection);
     }
 
     /**

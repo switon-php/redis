@@ -6,6 +6,7 @@ namespace Switon\Redis\Event;
 
 use Redis;
 use RedisCluster;
+use Switon\Core\SenderAwareInterface;
 use Switon\Eventing\Attribute\EventLevel;
 use Switon\Eventing\Severity;
 use Switon\Redis\Connection;
@@ -20,18 +21,22 @@ use Switon\Redis\Connection;
  * @see \Switon\Redis\Event\RedisConnected
  */
 #[EventLevel(Severity::DEBUG)]
-class RedisClose
+class RedisClose implements SenderAwareInterface
 {
     /**
-     * @param Connection $connection Closed connection wrapper
      * @param string $uri Connected Redis URI
      * @param Redis|RedisCluster $redis Native Redis client instance
      */
     public function __construct(
-        public Connection         $connection,
-        public string             $uri,
+        public Connection $sender,
+        public string $uri,
         public Redis|RedisCluster $redis,
     ) {
 
+    }
+
+    public function getSender(): Connection
+    {
+        return $this->sender;
     }
 }
