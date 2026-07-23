@@ -18,7 +18,7 @@ use function preg_match;
  * Use when you need Redis commands through dependency injection, with transient
  * dedicated clients for pool-incompatible operations.
  *
- * Guidance: In pooled mode, commands that require connection state (`watch`, `unwatch`, `multi`, `pipeline`, `select`, `scan` and variants) must use {@see getTransient()} first.
+ * Guidance: In pooled mode, commands that require connection state (`watch`, `unwatch`, `multi`, `pipeline`, `select`, `scan` and variants) must use `getTransient()` first.
  *
  * Road-signs:
  * - pooled call guard in __call
