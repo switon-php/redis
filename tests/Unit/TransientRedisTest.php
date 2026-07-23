@@ -15,8 +15,6 @@ use Switon\Redis\Tests\TestCase;
  *
  * Redis no longer uses a separate TransientRedis class. Instead, getTransient() creates
  * a transient instance with a held connection from the pool.
- *
- * @group redis
  */
 #[AllowMockObjectsWithoutExpectations]
 class TransientRedisTest extends TestCase

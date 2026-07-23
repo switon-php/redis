@@ -7,7 +7,7 @@ namespace Switon\Redis\Tests\Fixtures;
 use Switon\Redis\ClientInterface;
 
 /** @internal Minimal {@see ClientInterface} stand-in for connection owner typing in tests. */
-final class StubRedisClient implements ClientInterface
+class StubRedisClient implements ClientInterface
 {
     public function getUri(): ?string
     {

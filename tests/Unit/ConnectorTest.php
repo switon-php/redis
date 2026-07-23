@@ -15,7 +15,7 @@ use Switon\Redis\Connector\SentinelConnector;
 use Switon\Redis\Exception\AuthException;
 use Switon\Redis\Exception\ConnectionException;
 use Switon\Redis\Exception\InvalidUriFormatException;
-use Switon\Redis\Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 use RedisException;
 
 #[AllowMockObjectsWithoutExpectations]

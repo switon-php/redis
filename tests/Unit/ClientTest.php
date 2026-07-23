@@ -18,8 +18,6 @@ use stdClass;
  *
  * Tests Redis client functionality including connection pooling, method calls,
  * and transient copy creation.
- *
- * @group redis
  */
 #[AllowMockObjectsWithoutExpectations]
 class ClientTest extends TestCase
