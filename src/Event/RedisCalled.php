@@ -19,7 +19,7 @@ use function substr;
 /**
  * Event emitted after Redis commands are executed.
  *
- * Log category: redis command lifecycle.
+ * Log category: `switon.redis.called`
  *
  * @see \Switon\Redis\Client
  * @see \Switon\Redis\Connection

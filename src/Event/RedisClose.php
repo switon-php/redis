@@ -14,7 +14,7 @@ use Switon\Redis\Connection;
 /**
  * Event emitted when Redis connections are closed.
  *
- * Log category: redis connection lifecycle.
+ * Log category: `switon.redis.close`
  *
  * @see \Switon\Redis\Client
  * @see \Switon\Redis\Connection

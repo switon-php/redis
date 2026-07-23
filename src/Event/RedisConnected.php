@@ -18,7 +18,7 @@ use function substr;
 /**
  * Event emitted after Redis connections are established.
  *
- * Log category: redis connection lifecycle.
+ * Log category: `switon.redis.connected`
  *
  * @see \Switon\Redis\Client
  * @see \Switon\Redis\Connection
