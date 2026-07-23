@@ -24,10 +24,10 @@ use Switon\Redis\Exception\AuthException;
 use Switon\Redis\Exception\ConnectionException;
 use Switon\Redis\Exception\DatabaseSelectException;
 use Switon\Redis\Exception\InvalidUriFormatException;
+use Switon\Redis\Tests\Fixtures\ConnectionProbe;
 use Switon\Redis\Tests\Fixtures\StubRedisClient;
 use Switon\Redis\Tests\TestCase;
 use RedisException;
-use ReflectionClass;
 use RuntimeException;
 
 /**
@@ -35,8 +35,6 @@ use RuntimeException;
  *
  * Tests Redis connection functionality including connection establishment,
  * heartbeat monitoring, event dispatching, and error handling.
- *
- * @group redis
  */
 #[AllowMockObjectsWithoutExpectations]
 class ConnectionTest extends TestCase
@@ -46,6 +44,25 @@ class ConnectionTest extends TestCase
     /**
      * Test that Connection constructor parses heartbeat from URI.
      */
+    public function testGetOwnerReturnsInjectedClient(): void
+    {
+        $owner = new StubRedisClient();
+        $connection = $this->make(Connection::class, [
+            'uri' => 'redis://127.0.0.1:6379/0',
+            'owner' => $owner,
+            'eventDispatcher' => $this->eventDispatcher,
+            'clock' => $this->createStub(ClockInterface::class),
+            'connectors' => [
+                'redis' => new RedisConnector($this->createStub(MakerInterface::class)),
+                'rediss' => new RedisConnector($this->createStub(MakerInterface::class)),
+                'sentinel' => new SentinelConnector($this->createStub(MakerInterface::class)),
+                'cluster' => new ClusterConnector($this->createStub(MakerInterface::class)),
+            ],
+        ]);
+
+        $this->assertSame($owner, $connection->getOwner());
+    }
+
     public function testConstructorParsesHeartbeatFromUri(): void
     {
         $uri = 'redis://127.0.0.1:6379/0?heartbeat=30';
@@ -297,8 +314,8 @@ class ConnectionTest extends TestCase
             public bool $called = false;
 
             public function __construct(
-                private Redis  $redis,
-                private string $expectedUri
+                protected Redis  $redis,
+                protected string $expectedUri
             ) {
             }
 
@@ -321,7 +338,8 @@ class ConnectionTest extends TestCase
         $this->mockContainer->expects($this->never())
             ->method('make');
 
-        $this->injectConnectionProperty($connection, 'connectors', [
+        $this->assertInstanceOf(ConnectionProbe::class, $connection);
+        $connection->setConnectorsForTest([
             'redis' => $redisConnector,
             'rediss' => $redisConnector,
             'sentinel' => new SentinelConnector($this->mockContainer),
@@ -344,8 +362,8 @@ class ConnectionTest extends TestCase
             public bool $called = false;
 
             public function __construct(
-                private RedisCluster $cluster,
-                private string       $expectedUri
+                protected RedisCluster $cluster,
+                protected string       $expectedUri
             ) {
             }
 
@@ -368,7 +386,8 @@ class ConnectionTest extends TestCase
         $this->mockContainer->expects($this->never())
             ->method('make');
 
-        $this->injectConnectionProperty($connection, 'connectors', [
+        $this->assertInstanceOf(ConnectionProbe::class, $connection);
+        $connection->setConnectorsForTest([
             'redis' => new RedisConnector($this->mockContainer),
             'rediss' => new RedisConnector($this->mockContainer),
             'sentinel' => new SentinelConnector($this->mockContainer),
@@ -1660,7 +1679,7 @@ class ConnectionTest extends TestCase
         );
 
         // Use container's make() method to properly inject dependencies
-        return $this->make(Connection::class, [
+        return $this->make(ConnectionProbe::class, [
             'uri' => $uri,
             'owner' => new StubRedisClient(),
             'eventDispatcher' => $this->eventDispatcher,
@@ -1674,10 +1693,4 @@ class ConnectionTest extends TestCase
         ]);
     }
 
-    protected function injectConnectionProperty(object $object, string $property, mixed $value): void
-    {
-        $reflection = new ReflectionClass($object);
-        $prop = $reflection->getProperty($property);
-        $prop->setValue($object, $value);
-    }
 }
