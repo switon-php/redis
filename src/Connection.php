@@ -50,6 +50,8 @@ use function preg_match;
  * @see \Switon\Redis\Event\RedisCalling
  * @see \Switon\Redis\Event\RedisCalled
  * @see \Switon\Redis\Event\RedisClose
+ *
+ * @implements OwnerAwareInterface<ClientInterface>
  */
 class Connection implements OwnerAwareInterface
 {
@@ -69,7 +71,6 @@ class Connection implements OwnerAwareInterface
 
     protected Redis|RedisCluster|null $redis = null;
     protected ?float $last_heartbeat = null;
-
     protected int $heartbeat;
 
     /**
