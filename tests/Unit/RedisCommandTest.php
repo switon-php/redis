@@ -13,7 +13,6 @@ use Switon\Di\NamedLookupInterface;
 use Switon\Redis\ClientInterface;
 use Switon\Redis\Command\RedisCommand;
 use Switon\Redis\Exception\ConnectionException;
-use ReflectionMethod;
 use RuntimeException;
 use Throwable;
 use stdClass;
@@ -334,10 +333,7 @@ class RedisCommandTest extends TestCase
 
     public function testFormatKeyReplacesUnderscoresWithSpaces(): void
     {
-        $formatKey = new ReflectionMethod(RedisCommand::class, 'formatKey');
-        $formatKey->setAccessible(true);
-
-        $this->assertSame('connected clients', $formatKey->invoke($this->command, 'connected_clients'));
+        $this->assertSame('connected clients', $this->command->formatKeyForTest('connected_clients'));
     }
 
     public function testFormatValueFormatsBoolAndNumbers(): void
@@ -346,29 +342,38 @@ class RedisCommandTest extends TestCase
             return $text;
         });
 
-        $formatValue = new ReflectionMethod(RedisCommand::class, 'formatValue');
-        $formatValue->setAccessible(true);
-
-        $this->assertSame('yes', $formatValue->invoke($this->command, true));
-        $this->assertSame('no', $formatValue->invoke($this->command, false));
-        $this->assertSame('1,234', $formatValue->invoke($this->command, 1234));
-        $this->assertSame('1,235', $formatValue->invoke($this->command, 1234.56));
-        $this->assertSame('hello', $formatValue->invoke($this->command, 'hello'));
+        $this->assertSame('yes', $this->command->formatValueForTest(true));
+        $this->assertSame('no', $this->command->formatValueForTest(false));
+        $this->assertSame('1,234', $this->command->formatValueForTest(1234));
+        $this->assertSame('1,235', $this->command->formatValueForTest(1234.56));
+        $this->assertSame('hello', $this->command->formatValueForTest('hello'));
     }
 
     public function testIsImportantMetricMatchesKnownKeys(): void
     {
-        $m = new ReflectionMethod(RedisCommand::class, 'isImportantMetric');
-        $m->setAccessible(true);
-
-        $this->assertTrue($m->invoke($this->command, 'redis_version'));
-        $this->assertFalse($m->invoke($this->command, 'random_key'));
+        $this->assertTrue($this->command->isImportantMetricForTest('redis_version'));
+        $this->assertFalse($this->command->isImportantMetricForTest('random_key'));
     }
 
 }
 
 class RedisCommandProbe extends RedisCommand
 {
+    public function formatKeyForTest(string $key): string
+    {
+        return $this->formatKey($key);
+    }
+
+    public function formatValueForTest(mixed $value): string
+    {
+        return $this->formatValue($value);
+    }
+
+    public function isImportantMetricForTest(string $key): bool
+    {
+        return $this->isImportantMetric($key);
+    }
+
     public function setClock(ClockInterface $clock): void
     {
         $this->clock = $clock;
