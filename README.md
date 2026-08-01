@@ -46,7 +46,7 @@ class UserCache
 }
 ```
 
-Docs: https://docs.switon.dev/latest/redis
+Docs: https://github.com/switon-php/redis/blob/main/docs/README.md
 
 ## License
 

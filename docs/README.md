@@ -96,5 +96,5 @@ Common query options: `auth`, `sentinel_auth`, `timeout`, `db`, `persistent`, `h
 
 - **Common questions:** [FAQ](faq.md#redis-faq)
 - **Connection model and trade-offs:** [Design Rationale](design.md#design-rationale)
-- **Pooling mechanics:** [Pool Package](../../pool/docs/README.md)
-- **Redis as queue transport:** [Queue Package](../../queue/docs/README.md)
+- **Pooling mechanics:** [Pool Package](https://github.com/switon-php/pool/blob/main/docs/README.md)
+- **Redis as queue transport:** [Queue Package](https://github.com/switon-php/queue/blob/main/docs/README.md)

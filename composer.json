@@ -19,7 +19,7 @@
     "support": {
         "source": "https://github.com/switon-php/redis",
         "issues": "https://github.com/switon-php/redis/issues",
-        "docs": "https://docs.switon.dev/latest/redis"
+        "docs": "https://github.com/switon-php/redis/blob/main/docs/README.md"
     },
     "require": {
         "php": ">=8.3",
